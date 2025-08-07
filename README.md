@@ -525,6 +525,6 @@ Formato de mensaje JSON:
 
 Para soporte técnico o consultas:
 - Abrir un issue en GitHub
-- Email: soporte@smartbee.com
+- Email: soporte@smartbee.cl
 
 SmartBee - Desarrollado para la comunidad apícola chilena
