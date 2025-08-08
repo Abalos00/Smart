@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
 import BeeLogo from './components/UI/BeeLogo';
 import Login from './components/Auth/Login';
 import Header from './components/Layout/Header';
@@ -11,6 +12,7 @@ import AdminDashboard from './components/Dashboard/AdminDashboard';
 import UserManagement from './components/Admin/UserManagement';
 import NodeManagement from './components/Admin/NodeManagement';
 import AlertsPanel from './components/Dashboard/AlertsPanel';
+import SettingsPanel from './components/Dashboard/SettingsPanel';
 
 const AppContent = () => {
   const { isAuthenticated, loading, isAdmin } = useAuth();
@@ -46,12 +48,7 @@ const AppContent = () => {
       case 'alerts':
         return <AlertsPanel />;
       case 'settings':
-        return (
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Configuración</h2>
-            <p className="text-gray-600">Panel de configuración en desarrollo...</p>
-          </div>
-        );
+        return <SettingsPanel />;
       default:
         return isAdmin ? <AdminDashboard /> : <ApicultorDashboard />;
     }
@@ -84,7 +81,9 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <DataProvider>
-          <AppContent />
+          <NotificationProvider>
+            <AppContent />
+          </NotificationProvider>
         </DataProvider>
       </AuthProvider>
     </ThemeProvider>
