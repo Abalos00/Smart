@@ -12,8 +12,9 @@ const ApicultorDashboard = () => {
   // Filtrar nodos del usuario actual
   const userNodes = nodes.filter(node => node.userId === user.id);
   
-  // Los apicultores solo tienen una colmena
-  const userNode = userNodes[0];
+  // Los apicultores tienen una colmena y un sensor de ambiente
+  const userNode = userNodes.find(node => node.type === 'colmena');
+  const userAmbientNode = userNodes.find(node => node.type === 'Ambiente');
 
   if (!userNode) {
     return (
@@ -44,13 +45,31 @@ const ApicultorDashboard = () => {
         data={realTimeData[userNode.id]}
         type={userNode.type}
       />
-
-      {/* Gráfico histórico */}
-      <div>
+      {/* widget en tiempo real de Ambiente */}
+      {userAmbientNode && (
+        <SensorWidget
+          nodeId={userAmbientNode.id}
+          nodeName={userAmbientNode.name}
+          data={realTimeData[userAmbientNode.id]}
+          type={userAmbientNode.type}
+        />
+      )}
+      
+      {/* Gráficos históricos */}
+      <div className="space-y-6">
+        {/* Gráfico de colmena */}
         <HistoricalChart
           nodeId={userNode.id}
-          nodeName={userNode.name}
+          nodeName={`${userNode.name} - Colmena`}
         />
+        
+        {/* Gráfico de ambiente */}
+        {userAmbientNode && (
+          <HistoricalChart
+            nodeId={userAmbientNode.id}
+            nodeName={`${userAmbientNode.name} - Ambiente`}
+          />
+        )}
       </div>
 
       {/* Panel de alertas */}
