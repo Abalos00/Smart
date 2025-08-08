@@ -61,14 +61,14 @@ export const NotificationProvider = ({ children }) => {
             ...notification
         };
 
-        setNotifications(prev => [newNotification, ...prev].slice(0, 50)); // Mantener solo 50 notificaciones
+        setNotifications(prev => [newNotification, ...prev].slice(0, 50)); 
 
         // Reproducir sonido si está habilitado
         if (settings.sound) {
             try {
-                const audio = new Audio('/notification-sound.mp3'); // Necesitarías agregar este archivo
+                const audio = new Audio('/notification-sound.mp3'); 
                 audio.volume = 0.3;
-                audio.play().catch(() => { }); // Ignorar errores de reproducción
+                audio.play().catch(() => { }); 
             } catch (error) {
                 console.log('No se pudo reproducir el sonido de notificación');
             }
