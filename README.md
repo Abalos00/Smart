@@ -106,9 +106,6 @@ Actualmente SmartBee utiliza datos simulados para demostración. Para conectar c
 Necesitará un servidor backend que proporcione una API REST. Recomendamos:
 
 - Node.js con Express
-- Python con FastAPI
-- PHP con Laravel
-- Java con Spring Boot
 
 ### 2. Variables de Entorno
 
@@ -116,68 +113,13 @@ Cree un archivo `.env` en la raíz del proyecto:
 
 ```
 VITE_API_BASE_URL=http://localhost:3001/api
-VITE_DATABASE_URL=postgresql://usuario:password@localhost:5432/smartbee
+VITE_DATABASE_URL=mysql://usuario:password@localhost:5432/smartbee
 VITE_MQTT_BROKER_URL=ws://localhost:8883
 VITE_MQTT_USERNAME=tu_usuario_mqtt
 VITE_MQTT_PASSWORD=tu_password_mqtt
 ```
 
-### 3. Estructura de Base de Datos
-
-#### Tabla: usuarios
-```sql
-CREATE TABLE usuarios (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    rol VARCHAR(50) DEFAULT 'apicultor',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-#### Tabla: nodos
-```sql
-CREATE TABLE nodos (
-    id VARCHAR(50) PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    latitud DECIMAL(10, 8) NOT NULL,
-    longitud DECIMAL(11, 8) NOT NULL,
-    usuario_id INTEGER REFERENCES usuarios(id),
-    activo BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-#### Tabla: datos_sensores
-```sql
-CREATE TABLE datos_sensores (
-    id SERIAL PRIMARY KEY,
-    nodo_id VARCHAR(50) REFERENCES nodos(id),
-    temperatura DECIMAL(5, 2),
-    humedad DECIMAL(5, 2),
-    peso DECIMAL(8, 3),
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-#### Tabla: alertas
-```sql
-CREATE TABLE alertas (
-    id SERIAL PRIMARY KEY,
-    nodo_id VARCHAR(50) REFERENCES nodos(id),
-    tipo VARCHAR(100) NOT NULL,
-    severidad VARCHAR(50) NOT NULL,
-    mensaje TEXT NOT NULL,
-    resuelto BOOLEAN DEFAULT false,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### Se puede usar otra base de datos solo hay que adaptarlo.
-
-### 4. Endpoints de API Requeridos
+### 3. Endpoints de API Requeridos
 
 Su backend debe implementar estos endpoints:
 
@@ -203,219 +145,7 @@ Su backend debe implementar estos endpoints:
 - PUT /api/alertas/:id/resolver - Resolver alerta
 - DELETE /api/alertas/:id - Eliminar alerta
 
-### 5. Formato de Datos
-
-#### Usuario
-```json
-{
-  "id": 1,
-  "nombre": "Juan Pérez",
-  "email": "juan@ejemplo.com",
-  "rol": "apicultor"
-}
-```
-
-#### Nodo
-```json
-{
-  "id": "nodo_001",
-  "nombre": "Colmena Norte",
-  "tipo": "colmena",
-  "latitud": -34.6037,
-  "longitud": -58.3816,
-  "usuario_id": 2,
-  "activo": true
-}
-```
-
-#### Datos de Sensor
-```json
-{
-  "nodo_id": "nodo_001",
-  "temperatura": 25.5,
-  "humedad": 65.2,
-  "peso": 48.7,
-  "timestamp": "2024-01-01T12:00:00Z"
-}
-```
-
-#### Alerta
-```json
-{
-  "id": 1,
-  "nodo_id": "nodo_001",
-  "tipo": "temperatura_alta",
-  "severidad": "alta",
-  "mensaje": "Temperatura elevada detectada",
-  "resuelto": false,
-  "timestamp": "2024-01-01T12:00:00Z"
-}
-```
-
-### 6. Modificar el Código para Usar Datos Reales
-
-#### Paso 1: Crear servicio de API
-
-Cree el archivo `src/services/api.js`:
-
-```javascript
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-
-class ApiService {
-  async request(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-    const token = localStorage.getItem('token');
-    
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
-    }
-    
-    return response.json();
-  }
-
-  // Usuarios
-  async getUsuarios() {
-    return this.request('/usuarios');
-  }
-
-  async createUsuario(userData) {
-    return this.request('/usuarios', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-    });
-  }
-
-  // Nodos
-  async getNodos() {
-    return this.request('/nodos');
-  }
-
-  async getDatosTiempoReal(nodoId) {
-    return this.request(`/nodos/${nodoId}/datos/tiempo-real`);
-  }
-
-  async getDatosHistoricos(nodoId, periodo, fecha) {
-    return this.request(`/nodos/${nodoId}/datos/historicos?periodo=${periodo}&fecha=${fecha}`);
-  }
-
-  // Alertas
-  async getAlertas() {
-    return this.request('/alertas');
-  }
-
-  async resolverAlerta(alertaId) {
-    return this.request(`/alertas/${alertaId}/resolver`, {
-      method: 'PUT',
-    });
-  }
-}
-
-export default new ApiService();
-```
-
-#### Paso 2: Modificar DataContext
-
-Actualice `src/context/DataContext.jsx` para usar la API real:
-
-```javascript
-import { createContext, useContext, useState, useEffect } from 'react';
-import ApiService from '../services/api';
-
-const DataContext = createContext();
-
-export const useData = () => {
-  const context = useContext(DataContext);
-  if (!context) {
-    throw new Error('useData must be used within a DataProvider');
-  }
-  return context;
-};
-
-export const DataProvider = ({ children }) => {
-  const [nodes, setNodes] = useState([]);
-  const [realTimeData, setRealTimeData] = useState({});
-  const [alerts, setAlerts] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
-    try {
-      const [nodesData, usersData, alertsData] = await Promise.all([
-        ApiService.getNodos(),
-        ApiService.getUsuarios(),
-        ApiService.getAlertas(),
-      ]);
-
-      setNodes(nodesData);
-      setUsers(usersData);
-      setAlerts(alertsData);
-
-      // Cargar datos en tiempo real para cada nodo
-      const realTimePromises = nodesData.map(node =>
-        ApiService.getDatosTiempoReal(node.id)
-      );
-      
-      const realTimeResults = await Promise.all(realTimePromises);
-      const realTimeMap = {};
-      
-      nodesData.forEach((node, index) => {
-        realTimeMap[node.id] = realTimeResults[index];
-      });
-      
-      setRealTimeData(realTimeMap);
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateHistoricalData = async (nodeId, period) => {
-    try {
-      const fecha = new Date().toISOString().split('T')[0];
-      return await ApiService.getDatosHistoricos(nodeId, period, fecha);
-    } catch (error) {
-      console.error('Error cargando datos históricos:', error);
-      return [];
-    }
-  };
-
-  const value = {
-    nodes,
-    realTimeData,
-    alerts,
-    users,
-    loading,
-    setUsers,
-    setAlerts,
-    generateHistoricalData,
-    refreshData: loadInitialData,
-  };
-
-  return (
-    <DataContext.Provider value={value}>
-      {children}
-    </DataContext.Provider>
-  );
-};
-```
-
-### 7. Integración MQTT para Datos en Tiempo Real
+### 4. Integración MQTT para Datos en Tiempo Real
 
 Para recibir datos de sensores en tiempo real vía MQTT:
 
@@ -487,7 +217,7 @@ class MqttService {
 export default new MqttService();
 ```
 
-### 8. Tópicos MQTT Esperados
+### 5. Tópicos MQTT Esperados
 
 Configure sus sensores para enviar datos a estos tópicos:
 
@@ -505,7 +235,7 @@ Formato de mensaje JSON:
 }
 ```
 
-### 9. Consideraciones de Seguridad
+### 6. Consideraciones de Seguridad
 
 - Use HTTPS en producción
 - Implemente autenticación JWT
@@ -514,7 +244,7 @@ Formato de mensaje JSON:
 - Implemente rate limiting en la API
 - Sanitice datos antes de mostrarlos
 
-### 10. Monitoreo y Logs
+### 7. Monitoreo y Logs
 
 - Configure logs del servidor
 - Implemente métricas de rendimiento
