@@ -233,10 +233,4 @@ Formato de mensaje JSON:
 - Use herramientas como Sentry para error tracking
 - Configure alertas de sistema
 
-## Soporte
-
-Para soporte técnico o consultas:
-- Abrir un issue en GitHub
-- Email: soporte@smartbee.cl
-
 SmartBee - Desarrollado para la comunidad apícola chilena
