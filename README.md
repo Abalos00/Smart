@@ -131,7 +131,7 @@ Su backend debe implementar estos endpoints:
 - PUT /api/alertas/:id/resolver - Resolver alerta
 - DELETE /api/alertas/:id - Eliminar alerta
 
-### 4. Integración MQTT para Datos en Tiempo Real
+### 4. Integración MQTT para Datos en Tiempo Real, Una vez se este utilizando un backend dentro del proyecto.
 
 Para recibir datos de sensores en tiempo real vía MQTT:
 
