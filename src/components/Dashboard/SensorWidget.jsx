@@ -44,6 +44,9 @@ const SensorWidget = ({ nodeId, nodeName, data, type }) => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 lg:p-6 hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 min-h-[200px]">
+      <h1 className='text-gray-600 dark:text-gray-100 lg:text-2xl font-medium m-2' >
+        {type === 'Ambiente' ? 'DATOS DEL AMBIENTE' : 'DATOS DE COLMENA'}
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         {widgets.map((widget) => {
           const Icon = widget.icon;
@@ -76,6 +79,7 @@ const SensorWidget = ({ nodeId, nodeName, data, type }) => {
       )}
     </div>
   );
+  
 };
 
 export default SensorWidget;

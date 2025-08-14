@@ -20,18 +20,22 @@ export const DataProvider = ({ children }) => {
   // Simular datos iniciales
   useEffect(() => {
     const mockNodes = [
-      { id: 'node_001', name: 'Colmena de Juan Pérez', type: 'colmena', lat: -34.6037, lng: -58.3816, userId: 2 },
-      { id: 'node_002', name: 'Colmena de María García', type: 'colmena', lat: -34.6137, lng: -58.3916, userId: 3 },
-      { id: 'node_003', name: 'Colmena de Carlos López', type: 'colmena', lat: -34.6237, lng: -58.4016, userId: 4 },
-      { id: 'node_004', name: 'Colmena de Ana Martínez', type: 'colmena', lat: -34.6337, lng: -58.4116, userId: 5 }
+      { id: 'node_001', name: 'Juan Pérez', type: 'colmena', lat: -34.6037, lng: -58.3816, userId: 2 },
+      { id: 'node_002', name: 'María García', type: 'colmena', lat: -34.6137, lng: -58.3916, userId: 3 },
+      { id: 'node_003', name: 'Carlos López', type: 'colmena', lat: -34.6237, lng: -58.4016, userId: 4 },
+      { id: 'node_004', name: 'Ana Martínez', type: 'colmena', lat: -34.6337, lng: -58.4116, userId: 5 },
+      { id: 'node_A_001', name: 'Juan Pérez', type: 'Ambiente', lat: -34.6037, lng: -58.3816, userId: 2 },
+      { id: 'node_A_002', name: 'María García', type: 'Ambiente', lat: -34.6137, lng: -58.3916, userId: 3 },
+      { id: 'node_A_003', name: 'Carlos López', type: 'Ambiente', lat: -34.6237, lng: -58.4016, userId: 4 },
+      { id: 'node_A_004', name: 'Ana Martínez', type: 'Ambiente', lat: -34.6337, lng: -58.4116, userId: 5 }
     ];
 
     const mockUsers = [
       { id: 1, name: 'Administrador', email: 'admin@apicultor.com', role: 'admin' },
-      { id: 2, name: 'Juan Pérez', email: 'apicultor@test.com', role: 'apicultor', nodes: ['node_001'] },
-      { id: 3, name: 'María García', email: 'maria@apicultor.com', role: 'apicultor', nodes: ['node_002'] },
-      { id: 4, name: 'Carlos López', email: 'carlos@apicultor.com', role: 'apicultor', nodes: ['node_003'] },
-      { id: 5, name: 'Ana Martínez', email: 'ana@apicultor.com', role: 'apicultor', nodes: ['node_004'] }
+      { id: 2, name: 'Juan Pérez', email: 'apicultor@test.com', role: 'apicultor', nodes: ['node_001', 'node_A_02'] },
+      { id: 3, name: 'María García', email: 'maria@apicultor.com', role: 'apicultor', nodes: ['node_002', 'node_A_02'] },
+      { id: 4, name: 'Carlos López', email: 'carlos@apicultor.com', role: 'apicultor', nodes: ['node_003', 'node_A_02'] },
+      { id: 5, name: 'Ana Martínez', email: 'ana@apicultor.com', role: 'apicultor', nodes: ['node_004', 'node_A_02'] }
     ];
 
     const mockAlerts = [
@@ -52,7 +56,26 @@ export const DataProvider = ({ children }) => {
         message: 'Variación anómala de peso en Colmena Sur',
         timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 horas atrás
         resolved: true
+      },
+      {
+        id: 3,
+        nodeId: 'node_A_001',
+        type: ALERT_TYPES.HUMEDAD_ALTA,
+        severity: ALERT_SEVERITY.LOW,
+        message: 'Humedad alta en Ambiente ',
+        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutos atrás
+        resolved: false
+      },
+      {
+        id: 4,
+        nodeId: 'node_A_002',
+        type: ALERT_TYPES.TEMPERATURA_BAJA,
+        severity: ALERT_SEVERITY.MEDIUM,
+        message: 'Temperatura baja en el Ambiente ',
+        timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hora atrás
+        resolved: false
       }
+
     ];
 
     setNodes(mockNodes);
@@ -91,6 +114,10 @@ export const DataProvider = ({ children }) => {
     let points = 24; // Por defecto para día
     let interval = 60 * 60 * 1000; // 1 hora
 
+    // Encontrar el nodo para verificar su tipo
+    const node = nodes.find(n => n.id === nodeId);
+    const isBeehive = node && node.type === 'colmena';
+
     switch (period) {
       case 'week':
         points = 7;
@@ -123,12 +150,18 @@ export const DataProvider = ({ children }) => {
 
     for (let i = 0; i < points; i++) {
       const timestamp = new Date(baseDate.getTime() + i * interval);
-      data.push({
+      const dataPoint = {
         timestamp,
         temperature: (Math.random() * 15 + 20).toFixed(1),
-        humidity: (Math.random() * 30 + 40).toFixed(1),
-        weight: (Math.random() * 10 + 45).toFixed(2)
-      });
+        humidity: (Math.random() * 30 + 40).toFixed(1)
+      };
+      
+      // Solo agregar peso si es una colmena
+      if (isBeehive) {
+        dataPoint.weight = (Math.random() * 10 + 45).toFixed(2);
+      }
+      
+      data.push(dataPoint);
     }
 
     return data;
