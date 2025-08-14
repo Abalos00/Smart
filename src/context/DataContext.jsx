@@ -41,25 +41,25 @@ export const DataProvider = ({ children }) => {
     const mockAlerts = [
       {
         id: 1,
-        nodeId: 'node_001',
+        nodeId: 'node_001 (temperatura)',
         type: ALERT_TYPES.TEMPERATURA_ALTA,
         severity: ALERT_SEVERITY.HIGH,
-        message: 'Temperatura elevada detectada en Colmena Norte',
+        message: 'Temperatura elevada detectada en Colmena',
         timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
         resolved: false
       },
       {
         id: 2,
-        nodeId: 'node_002',
+        nodeId: 'node_002 (peso)',
         type: ALERT_TYPES.PESO_ANOMALO,
         severity: ALERT_SEVERITY.MEDIUM,
-        message: 'Variación anómala de peso en Colmena Sur',
+        message: 'Variación anómala de peso en Colmena',
         timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 horas atrás
         resolved: true
       },
       {
         id: 3,
-        nodeId: 'node_A_001',
+        nodeId: 'node_A_001 (humedad)',
         type: ALERT_TYPES.HUMEDAD_ALTA,
         severity: ALERT_SEVERITY.LOW,
         message: 'Humedad alta en Ambiente ',
@@ -68,7 +68,7 @@ export const DataProvider = ({ children }) => {
       },
       {
         id: 4,
-        nodeId: 'node_A_002',
+        nodeId: 'node_A_002 (temperatura)',
         type: ALERT_TYPES.TEMPERATURA_BAJA,
         severity: ALERT_SEVERITY.MEDIUM,
         message: 'Temperatura baja en el Ambiente ',
