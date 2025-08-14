@@ -11,13 +11,6 @@ Una aplicación web moderna para el monitoreo en tiempo real de colmenas y anál
 - Interfaz intuitiva: Diseño limpio y fácil de usar
 - Una colmena por apicultor: Cada usuario gestiona su propia colmena
 
-### Para Administradores
-- Gestión de usuarios: Crear, editar y eliminar usuarios apicultores
-- Administración de nodos: Visualizar y gestionar todos los nodos del sistema
-- Vista general: Dashboard con estadísticas completas del sistema
-- Asignación de nodos: Vincular nodos específicos a cada apicultor
-- Acceso completo: Visualización de todas las colmenas del sistema
-
 ## Tecnologías Utilizadas
 
 ### Frontend
@@ -51,17 +44,19 @@ npm install
 
 # Iniciar servidor de desarrollo
 npm run dev
+
+# Buildear el projecto.
+npm run build
 ```
 
 La aplicación estará disponible en `http://localhost:5173`
 
+Para la instalación en el servidor COPIAR la carpeta /dist en el servidor.
+
 ### Cuentas de Prueba
 
+Estas cuentas no tienen funcionalidades y son estaticas, por lo que una vez se reemplace por un backend no van a ser eficientes.
 Para testing, utilice estas credenciales:
-
-**Administrador:**
-- Email: admin@apicultor.com
-- Password: admin123
 
 **Apicultores:**
 - Juan Pérez: apicultor@test.com / api123
@@ -77,13 +72,6 @@ Para testing, utilice estas credenciales:
 - Gráficos históricos con filtros por día, semana, mes y año
 - Panel de alertas específicas de su colmena
 - Selección de fechas específicas para análisis histórico
-
-### Dashboard del Administrador
-- Vista general de todas las colmenas del sistema
-- Estadísticas globales: total de nodos, usuarios activos, alertas
-- Carrusel de nodos para navegación entre colmenas
-- Selector de nodo para vista detallada
-- Gestión completa de usuarios y nodos
 
 ### Sistema de Alertas
 - Alertas automáticas por condiciones anómalas
@@ -107,7 +95,7 @@ Necesitará un servidor backend que proporcione una API REST. Recomendamos:
 
 - Node.js con Express
 
-### 2. Variables de Entorno
+### 2. Variables de Entorno, en caso de ser requeridas.
 
 Cree un archivo `.env` en la raíz del proyecto:
 
@@ -127,12 +115,6 @@ Su backend debe implementar estos endpoints:
 - POST /api/auth/login - Iniciar sesión
 - POST /api/auth/logout - Cerrar sesión
 - GET /api/auth/me - Obtener usuario actual
-
-#### Usuarios (solo administradores)
-- GET /api/usuarios - Listar usuarios
-- POST /api/usuarios - Crear usuario
-- PUT /api/usuarios/:id - Actualizar usuario
-- DELETE /api/usuarios/:id - Eliminar usuario
 
 #### Nodos
 - GET /api/nodos - Listar nodos
