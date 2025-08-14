@@ -44,12 +44,16 @@ npm install
 
 # Iniciar servidor de desarrollo
 npm run dev
-
-# Buildear el projecto.
-npm run build
 ```
 
 La aplicación estará disponible en `http://localhost:5173`
+
+### Despliegue en servidor
+
+```bash
+# Buildear el projecto.
+npm run build
+```
 
 Para la instalación en el servidor COPIAR la carpeta /dist en el servidor.
 
