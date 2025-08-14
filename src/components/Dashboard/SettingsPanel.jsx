@@ -378,7 +378,7 @@ const SettingsPanel = () => {
         { id: 'notifications', label: 'Notificaciones', icon: Bell },
         { id: 'display', label: 'Pantalla', icon: Monitor },
         { id: 'data', label: 'Datos', icon: Database },
-        { id: 'account', label: 'Cuenta', icon: User }
+        // { id: 'account', label: 'Cuenta', icon: User }
     ];
 
     return (
@@ -678,7 +678,7 @@ const SettingsPanel = () => {
                                         />
                                     </SettingItem>
 
-                                    <SettingItem
+                                    {/* <SettingItem
                                         label="Retención de datos"
                                         description="Días para mantener los datos históricos"
                                     >
@@ -692,7 +692,7 @@ const SettingsPanel = () => {
                                             <option value={90}>90 días</option>
                                             <option value={365}>1 año</option>
                                         </select>
-                                    </SettingItem>
+                                    </SettingItem> */}
 
                                     <SettingItem
                                         icon={Download}

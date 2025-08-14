@@ -109,7 +109,7 @@ const Login = () => {
           <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Cuentas de prueba:</p>
             <div className="text-xs space-y-1">
-              <div className="text-gray-700 dark:text-gray-300"><strong>Admin:</strong> admin@apicultor.com / admin123</div>
+              {/* <div className="text-gray-700 dark:text-gray-300"><strong>Admin:</strong> admin@apicultor.com / admin123</div> */}
               <div className="text-gray-700 dark:text-gray-300"><strong>Juan Pérez:</strong> apicultor@test.com / api123</div>
               <div className="text-gray-700 dark:text-gray-300"><strong>María García:</strong> maria@apicultor.com / maria123</div>
             </div>
